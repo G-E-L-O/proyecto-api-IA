@@ -1,311 +1,223 @@
-# 📖 Agente de Narrativas Interactivas con IA
+# Agente de Narrativas Interactivas con IA
 
-Un proyecto revolucionario de 2025 que utiliza inteligencia artificial avanzada para crear historias interactivas completamente inmersivas. El sistema genera narrativas dinámicas con personajes complejos, tramas ramificadas y decisiones que realmente importan.
+Sistema de generación de narrativas interactivas mediante inteligencia artificial que permite crear historias dinámicas con personajes complejos, tramas ramificadas y decisiones que modifican el curso de la narrativa en tiempo real.
 
-## 🌟 Características Únicas
+[![Node.js](https://img.shields.io/badge/Node.js-16+-339933?style=flat-square&logo=node.js)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
+[![Express](https://img.shields.io/badge/Express-4.18-000000?style=flat-square&logo=express)](https://expressjs.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-- **Generación de Historias Completas**: La IA crea narrativas completas con personajes, tramas y atmósferas únicas
-- **Decisiones que Importan**: Cada decisión del usuario cambia el curso de la historia de forma significativa
-- **Personajes Dinámicos**: Personajes con personalidades complejas que evolucionan con la historia
-- **Narrativas Ramificadas**: Múltiples caminos narrativos que se adaptan a tus elecciones
-- **Interfaz Inmersiva**: Diseño moderno que te sumerge en la experiencia narrativa
-- **Múltiples Géneros**: Ciencia ficción, fantasía, misterio, terror, romance, drama, thriller, histórico, distopía
+## Descripción
 
-## 🚀 Tecnologías Utilizadas
+Este proyecto implementa una plataforma completa para la generación de narrativas interactivas utilizando Google Gemini. El sistema genera historias dinámicas donde cada decisión del usuario impacta significativamente el desarrollo narrativo, creando una experiencia única y personalizada.
+
+## Características Principales
+
+- **Generación Dinámica de Contenido**: Creación automática de narrativas completas con estructura coherente
+- **Sistema de Decisiones**: Múltiples puntos de ramificación que alteran la trama
+- **Gestión de Personajes**: Creación y evolución de personajes con personalidades complejas
+- **Múltiples Géneros**: Soporte para ciencia ficción, fantasía, misterio, terror, romance, drama, thriller, histórico y distopía
+- **Interfaz Moderna**: Diseño responsive con experiencia de usuario optimizada
+- **API RESTful**: Arquitectura basada en servicios para fácil integración
+
+## Tecnologías
 
 ### Backend
-- **Node.js** + **Express**: Servidor robusto y escalable
-- **OpenAI API (GPT-4)**: Generación inteligente de narrativas
-- **dotenv**: Gestión de variables de entorno
+- Node.js 16+
+- Express.js 4.18
+- Google Gemini API (plan gratuito)
+- dotenv para gestión de configuración
 
 ### Frontend
-- **React 18**: Framework moderno de UI
-- **Lucide React**: Iconos modernos y atractivos
-- **Axios**: Cliente HTTP para comunicación con la API
-- **CSS3**: Diseño moderno con gradientes y animaciones
+- React 18
+- Axios para comunicación HTTP
+- Lucide React para sistema de iconos
+- CSS3 con diseño responsive
 
-## 📋 Requisitos Previos
+## Requisitos del Sistema
 
-- Node.js (v16 o superior)
-- npm o yarn
-- API Key de OpenAI ([obtener aquí](https://platform.openai.com/api-keys))
+- Node.js 16 o superior
+- npm 8 o superior
+- API Key de Google Gemini ([obtener aquí](https://aistudio.google.com/app/apikey))
 
-## 🛠️ Instalación
+## Instalación
 
-### 1. Clonar o descargar el proyecto
+### 1. Clonar el Repositorio
 
 ```bash
-git clone <tu-repositorio>
+git clone <url-del-repositorio>
 cd proyecto-api-IA
 ```
 
-### 2. Instalar dependencias
+### 2. Instalar Dependencias
 
-**Opción A: Instalar todo de una vez**
 ```bash
 npm run install-all
 ```
 
-**Opción B: Instalar por separado**
-```bash
-# Backend
-npm install
+Este comando instalará automáticamente las dependencias del backend y del frontend.
 
-# Frontend
-cd client
-npm install
-cd ..
-```
+### 3. Configuración de Variables de Entorno
 
-### 3. Configurar variables de entorno
-
-Crea un archivo `.env` en la raíz del proyecto:
+Crear un archivo `.env` en la raíz del proyecto:
 
 ```env
-OPENAI_API_KEY=sk-tu-api-key-aqui
-OPENAI_MODEL=gpt-4-turbo-preview
+GEMINI_API_KEY=tu-api-key-de-gemini
 PORT=5000
 ```
 
-**⚠️ Importante**: 
-- Reemplaza `sk-tu-api-key-aqui` con tu API Key real de OpenAI
-- Obtén tu API Key en: https://platform.openai.com/api-keys
-- **Nunca compartas tu API Key** ni subas el archivo `.env` a repositorios públicos
+**Nota**: Este proyecto utiliza exclusivamente el plan gratuito de Google Gemini (Flash) y no consume tokens de planes de pago.
 
-## 🎯 Uso
+### 4. Ejecución
 
-### Iniciar la aplicación
+**Desarrollo:**
 
-**Opción 1: Ejecutar por separado (Recomendado para Windows/PowerShell)**
-
-Abre **dos terminales**:
-
-**Terminal 1 - Backend:**
 ```bash
+# Terminal 1: Servidor Backend
 npm run server
-```
 
-**Terminal 2 - Frontend:**
-```bash
+# Terminal 2: Cliente Frontend
 npm run client
 ```
 
-**Opción 2: Ejecutar ambos juntos**
+**Alternativamente:**
+
 ```bash
 npm run dev
 ```
 
-### Acceder a la aplicación
+La aplicación estará disponible en:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000
-- **Health Check**: http://localhost:5000/api/health
+## Documentación
 
-## 📖 Cómo Usar la Aplicación
+Documentación adicional disponible en el directorio `docs/`:
 
-### 1. Crear una Historia
+- [Guía de Instalación](docs/INSTALACION.md) - Instrucciones detalladas de configuración
+- [Documentación de API](docs/API.md) - Referencia completa de endpoints
+- [Arquitectura](docs/ARQUITECTURA.md) - Diseño y estructura del sistema
 
-1. Selecciona un **género** de la lista desplegable
-2. Ingresa un **tema o concepto principal** (ej: "Un científico que descubre un portal a otra dimensión")
-3. (Opcional) Agrega un **prompt inicial** con detalles específicos que quieres en la historia
-4. Haz clic en **"Crear Historia Interactiva"**
-
-### 2. Interactuar con la Historia
-
-1. **Lee el capítulo** generado por la IA
-2. **Elige una decisión** de las opciones propuestas, o
-3. **Describe tu propia acción** en el campo de texto
-4. Haz clic en **"Continuar Historia"** para ver las consecuencias
-5. La historia se adapta a tus decisiones y genera nuevos capítulos
-
-### 3. Explorar Personajes
-
-- Observa los **personajes generados** con personalidades únicas
-- Cada personaje tiene:
-  - Nombre y rol
-  - Personalidad y descripción
-  - Motivaciones y relaciones
-
-### 4. Disfrutar la Experiencia
-
-- Cada historia es **única** y se desarrolla según tus decisiones
-- Explora **diferentes caminos narrativos**
-- Crea **múltiples historias** con diferentes géneros y temas
-
-## 🔧 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 proyecto-api-IA/
 ├── server/
-│   ├── index.js                    # Servidor Express principal
+│   ├── index.js                 # Servidor Express y definición de rutas
 │   └── services/
-│       └── narrativeAgent.js       # Agente generador de narrativas
+│       ├── aiProvider.js        # Proveedor de servicios de IA
+│       └── narrativeAgent.js    # Lógica de generación narrativa
 ├── client/
-│   ├── public/
-│   │   └── index.html             # HTML principal
 │   ├── src/
-│   │   ├── App.js                 # Componente principal React
-│   │   ├── App.css                # Estilos de la aplicación
-│   │   ├── index.js               # Punto de entrada React
-│   │   └── index.css              # Estilos globales
-│   └── package.json               # Dependencias del frontend
-├── .env                           # Variables de entorno (crear manualmente)
-├── .gitignore                     # Archivos ignorados por Git
-├── package.json                   # Dependencias del backend
-└── README.md                      # Este archivo
+│   │   ├── App.js              # Componente principal de la aplicación
+│   │   ├── App.css             # Estilos de la aplicación
+│   │   ├── index.js            # Punto de entrada React
+│   │   └── index.css           # Estilos globales
+│   └── public/
+├── docs/                        # Documentación del proyecto
+│   ├── INSTALACION.md
+│   ├── API.md
+│   └── ARQUITECTURA.md
+├── .env                         # Variables de entorno (no versionado)
+├── .env.example                 # Plantilla de configuración
+├── package.json                 # Dependencias y scripts del backend
+└── README.md                    # Este archivo
 ```
 
-## 🔌 API Endpoints
+## API Reference
 
-### `GET /api/health`
+### Health Check
+
+```http
+GET /api/health
+```
+
 Verifica el estado del servidor.
 
-**Respuesta:**
-```json
-{
-  "status": "ok",
-  "message": "Agente de Narrativas Interactivas funcionando"
-}
-```
+### Crear Historia
 
-### `POST /api/story/create`
-Crea una nueva historia interactiva.
+```http
+POST /api/story/create
+Content-Type: application/json
 
-**Body:**
-```json
 {
   "genre": "ciencia ficción",
   "theme": "Un científico que descubre un portal",
-  "initialPrompt": "Incluye elementos de viaje en el tiempo",
-  "userPreferences": {}
+  "initialPrompt": "Incluye elementos de viaje en el tiempo"
 }
 ```
 
-**Respuesta:**
-```json
-{
-  "success": true,
-  "storyId": "story_1234567890_abc123",
-  "story": {
-    "id": "story_1234567890_abc123",
-    "genre": "ciencia ficción",
-    "theme": "Un científico que descubre un portal",
-    "currentChapter": 0,
-    "chapters": [...],
-    "characters": [...]
-  }
-}
-```
+### Continuar Historia
 
-### `POST /api/story/:storyId/continue`
-Continúa la historia con una decisión del usuario.
+```http
+POST /api/story/:storyId/continue
+Content-Type: application/json
 
-**Body:**
-```json
 {
   "decision": "Investigar el portal más a fondo",
   "userAction": "Decido usar mi equipo científico"
 }
 ```
 
-**Respuesta:**
-```json
-{
-  "success": true,
-  "story": {...},
-  "newChapter": {...}
-}
+### Obtener Historia
+
+```http
+GET /api/story/:storyId
 ```
 
-### `GET /api/story/:storyId`
 Obtiene el estado actual de una historia.
 
-### `POST /api/story/:storyId/character`
-Genera un nuevo personaje para la historia.
+Para documentación completa de la API, consultar [docs/API.md](docs/API.md).
 
-**Body:**
-```json
-{
-  "characterPrompt": "Un aliado misterioso con poderes especiales"
-}
+## Solución de Problemas
+
+### Error: GEMINI_API_KEY no está definida
+
+Verificar que:
+- El archivo `.env` existe en la raíz del proyecto
+- Contiene la variable `GEMINI_API_KEY` con el valor correcto
+- No hay espacios alrededor del signo `=`
+- El servidor fue reiniciado después de modificar `.env`
+
+### Error: Cuota excedida
+
+El plan gratuito tiene límites de uso. Si se alcanza el límite:
+- Verificar el uso en [Google AI Studio](https://aistudio.google.com/)
+- Esperar unos minutos si es un límite temporal de tasa
+- El sistema utiliza solo el modelo gratuito (Flash)
+
+### Puerto en uso
+
+Modificar el puerto en el archivo `.env`:
+
+```env
+PORT=5001
 ```
 
-## 🎨 Características del Diseño
+## Consideraciones de Desarrollo
 
-- **Gradientes modernos**: Diseño visualmente atractivo con gradientes
-- **Responsive**: Funciona perfectamente en móviles, tablets y desktop
-- **Animaciones suaves**: Transiciones y efectos visuales fluidos
-- **Iconografía moderna**: Iconos de Lucide React
-- **UX intuitiva**: Interfaz clara y fácil de usar
-- **Modo oscuro/claro**: Adaptación automática según el contexto
+- **Almacenamiento**: Las historias se mantienen en memoria durante la sesión. Para producción, implementar persistencia con base de datos.
+- **Modelo de IA**: Utiliza Google Gemini Flash (plan gratuito) por defecto.
+- **Seguridad**: Las claves API deben mantenerse en variables de entorno y nunca versionarse.
 
-## 🔮 Mejoras Futuras
+## Licencia
 
-- **Generación de Imágenes**: Ilustraciones generadas por IA para cada capítulo
-- **Síntesis de Voz**: Narración de audio con voces realistas
-- **Múltiples Finales**: Sistema de finales alternativos basados en decisiones acumulativas
-- **Modo Colaborativo**: Múltiples usuarios creando historias juntos
-- **Biblioteca de Historias**: Guardar y compartir historias creadas
-- **Exportación**: Exportar historias como libros electrónicos o PDFs
-- **Análisis de Narrativa**: Estadísticas sobre tus decisiones y caminos tomados
-- **Generación de Música**: Bandas sonoras personalizadas para cada historia
-- **Base de Datos**: Persistencia de historias en MongoDB o PostgreSQL
-- **Autenticación**: Sistema de usuarios para guardar historias personales
+MIT License - ver archivo LICENSE para más detalles.
 
-## 📝 Notas Importantes
+## Contribuciones
 
-- Este proyecto utiliza la API de OpenAI, que requiere créditos
-- El modelo por defecto es GPT-4 Turbo, pero puedes cambiarlo en `.env`
-- Las historias se almacenan en memoria durante la sesión (en producción usarías una base de datos)
-- Cada historia es única y generada dinámicamente, nunca se repite exactamente igual
-- Los costos de OpenAI varían según el uso (aproximadamente $0.01 por 1,000 tokens)
+Las contribuciones son bienvenidas. Por favor:
 
-## 🐛 Solución de Problemas
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-### Error: "OPENAI_API_KEY is not defined"
-- Verifica que el archivo `.env` existe en la raíz del proyecto
-- Asegúrate de que contiene `OPENAI_API_KEY=tu_clave_real`
-- No debe haber espacios alrededor del `=`
+## Soporte
 
-### Error: "spawn cmd.exe ENOENT" (Windows/PowerShell)
-- Ejecuta los comandos en terminales separadas (ver sección "Uso")
-- O usa Command Prompt (cmd.exe) en lugar de PowerShell
-
-### Puerto 3000 o 5000 ya en uso
-- Cambia el puerto en `.env` (PORT=5001)
-- O detén otros procesos que usen esos puertos
-
-### La historia no se genera
-- Verifica que tu API Key es válida y tiene créditos
-- Revisa la consola del servidor para ver errores específicos
-- Asegúrate de que el modelo especificado está disponible
-
-## 🤝 Contribuciones
-
-Este es un proyecto educativo. Las contribuciones y mejoras son bienvenidas.
-
-## 📄 Licencia
-
-MIT
-
-## 🎯 ¿Por qué es Revolucionario?
-
-Este proyecto es único porque:
-
-1. **No es un Chat**: No es una conversación simple, es un generador completo de narrativas interactivas
-2. **Adaptación Real**: La historia se adapta genuinamente a tus decisiones, no solo responde
-3. **Personajes Complejos**: Los personajes tienen personalidades, motivaciones y relaciones que evolucionan
-4. **Narrativa Ramificada**: Múltiples caminos narrativos que se generan dinámicamente
-5. **Experiencia Inmersiva**: Diseñado para sumergirte completamente en la historia
-
-### Basado en Papers Modernos de 2025
-
-- Sistemas de narrativa generativa con IA
-- Agentes autónomos para creación de contenido
-- Modelos de lenguaje para storytelling interactivo
-- Sistemas adaptativos de narrativa ramificada
-- Generación procedural de contenido narrativo
+Para reportar bugs o solicitar características, por favor abre un [issue](../../issues) en el repositorio.
 
 ---
 
-**Desarrollado con ❤️ usando las tecnologías más avanzadas de 2025**
+Desarrollado con Google Gemini API

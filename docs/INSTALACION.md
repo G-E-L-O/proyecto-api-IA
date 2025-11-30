@@ -1,235 +1,138 @@
-# 🚀 Guía de Instalación Completa
+# Guía de Instalación
 
-## Requisitos Previos
+## Requisitos del Sistema
 
-Antes de comenzar, asegúrate de tener instalado:
+- **Node.js** 16 o superior ([descargar](https://nodejs.org/))
+- **npm** 8 o superior (incluido con Node.js)
+- **API Key de Google Gemini** ([obtener](https://aistudio.google.com/app/apikey))
 
-- **Node.js** (versión 16 o superior)
-  - Descargar: https://nodejs.org/
-  - Verificar instalación: `node --version`
-- **npm** (viene con Node.js)
-  - Verificar instalación: `npm --version`
-- **Git** (opcional, para clonar el repositorio)
-  - Descargar: https://git-scm.com/
+## Proceso de Instalación
 
-## Paso 1: Obtener el Proyecto
+### Paso 1: Clonar el Repositorio
 
-### Opción A: Clonar desde Git
 ```bash
 git clone <url-del-repositorio>
 cd proyecto-api-IA
 ```
 
-### Opción B: Descargar y Extraer
-1. Descarga el proyecto como ZIP
-2. Extrae el archivo
-3. Abre una terminal en la carpeta extraída
+### Paso 2: Instalación de Dependencias
 
-## Paso 2: Instalar Dependencias
-
-### Instalar Todo de Una Vez (Recomendado)
+**Método Recomendado:**
 
 ```bash
 npm run install-all
 ```
 
-Este comando instalará las dependencias del backend y del frontend automáticamente.
+Este comando instalará automáticamente todas las dependencias necesarias para el backend y frontend.
 
-### Instalar por Separado
+**Método Alternativo:**
 
-**Backend:**
 ```bash
+# Backend
 npm install
-```
 
-**Frontend:**
-```bash
+# Frontend
 cd client
 npm install
 cd ..
 ```
 
-## Paso 3: Configurar Variables de Entorno
+### Paso 3: Configuración de Variables de Entorno
 
-### Crear el archivo `.env`
-
-Crea un archivo llamado `.env` en la raíz del proyecto (mismo nivel que `package.json`).
-
-**En Windows (PowerShell):**
-```powershell
-New-Item -Path .env -ItemType File
-```
-
-**En Windows (CMD):**
-```cmd
-type nul > .env
-```
-
-**En Linux/Mac:**
-```bash
-touch .env
-```
-
-### Obtener API Key de OpenAI
-
-1. Ve a: https://platform.openai.com/
-2. Inicia sesión o crea una cuenta
-3. Navega a: https://platform.openai.com/api-keys
-4. Haz clic en **"Create new secret key"**
-5. Dale un nombre descriptivo (ej: "Proyecto Narrativas")
-6. **Copia la clave inmediatamente** - solo se muestra una vez
-   - Formato: `sk-proj-abc123xyz789...`
-
-### Configurar el archivo `.env`
-
-Abre el archivo `.env` con cualquier editor de texto y agrega:
+Crear un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
 ```env
-OPENAI_API_KEY=sk-proj-tu-clave-real-aqui
-OPENAI_MODEL=gpt-4-turbo-preview
+GEMINI_API_KEY=tu-api-key-de-gemini
 PORT=5000
 ```
 
-**⚠️ IMPORTANTE:**
-- Reemplaza `sk-proj-tu-clave-real-aqui` con tu API Key real
-- No agregues comillas alrededor del valor
-- No dejes espacios alrededor del signo `=`
-- El archivo `.env` ya está en `.gitignore` para proteger tu clave
+**Obtener API Key de Google Gemini:**
 
-**Ejemplo de archivo `.env` correcto:**
-```env
-OPENAI_API_KEY=sk-proj-1234567890abcdefghijklmnopqrstuvwxyz
-OPENAI_MODEL=gpt-4-turbo-preview
-PORT=5000
-```
+1. Acceder a [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Iniciar sesión con cuenta de Google
+3. Seleccionar "Create API key"
+4. Copiar la clave generada y agregarla al archivo `.env`
 
-## Paso 4: Verificar la Instalación
+**Importante:** Este proyecto utiliza exclusivamente el plan gratuito de Gemini (Flash) y no consume tokens de planes de pago.
 
-### Verificar que Node.js funciona
-```bash
-node --version
-# Debería mostrar: v16.x.x o superior
-```
+### Paso 4: Iniciar la Aplicación
 
-### Verificar que npm funciona
-```bash
-npm --version
-# Debería mostrar: 8.x.x o superior
-```
+**Desarrollo con Terminales Separadas (Recomendado):**
 
-### Verificar estructura del proyecto
-```bash
-# Deberías ver estas carpetas y archivos:
-# - server/
-# - client/
-# - package.json
-# - .env (que acabas de crear)
-```
-
-## Paso 5: Iniciar la Aplicación
-
-### Opción 1: Ejecutar por Separado (Recomendado)
-
-Abre **dos terminales** en la raíz del proyecto:
-
-**Terminal 1 - Backend:**
+Terminal 1 - Servidor Backend:
 ```bash
 npm run server
 ```
 
-Deberías ver:
-```
-🚀 Servidor ejecutándose en http://localhost:5000
-📖 Agente de Narrativas Interactivas listo
-✨ Crea historias inmersivas con IA
-```
-
-**Terminal 2 - Frontend:**
+Terminal 2 - Cliente Frontend:
 ```bash
 npm run client
 ```
 
-El navegador se abrirá automáticamente en http://localhost:3000
-
-### Opción 2: Ejecutar Ambos Juntos
+**Desarrollo con Proceso Unificado:**
 
 ```bash
 npm run dev
 ```
 
-**Nota:** En Windows con PowerShell, si obtienes el error `spawn cmd.exe ENOENT`, usa la Opción 1.
+### Paso 5: Verificación
 
-## Paso 6: Verificar que Funciona
+Una vez iniciados los servicios:
 
-1. **Backend funcionando:**
-   - Abre: http://localhost:5000/api/health
-   - Deberías ver: `{"status":"ok","message":"Agente de Narrativas Interactivas funcionando"}`
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000/api/health
 
-2. **Frontend funcionando:**
-   - Abre: http://localhost:3000
-   - Deberías ver la interfaz de creación de historias
-
-3. **Probar creación de historia:**
-   - Selecciona un género
-   - Ingresa un tema
-   - Haz clic en "Crear Historia Interactiva"
-   - Deberías ver una historia generada
-
-## Solución de Problemas Comunes
-
-### Error: "Cannot find module"
-```bash
-# Reinstalar dependencias
-npm install
-cd client
-npm install
-cd ..
+El endpoint de health check debería retornar:
+```json
+{
+  "status": "ok",
+  "message": "Agente de Narrativas Interactivas funcionando"
+}
 ```
 
-### Error: "OPENAI_API_KEY is not defined"
-- Verifica que el archivo `.env` existe en la raíz
-- Verifica que no hay espacios alrededor del `=`
-- Verifica que la API Key es correcta
-- Reinicia el servidor después de crear/modificar `.env`
+## Solución de Problemas
 
-### Error: "spawn cmd.exe ENOENT" (Windows)
-- Usa la Opción 1 (dos terminales separadas)
-- O usa Command Prompt en lugar de PowerShell
+### Error: GEMINI_API_KEY no está definida
 
-### Puerto 3000 o 5000 ya en uso
+**Causas posibles:**
+- El archivo `.env` no existe en la raíz del proyecto
+- La variable está mal escrita o tiene espacios
+- El servidor no fue reiniciado después de crear el archivo
+
+**Solución:**
+1. Verificar que el archivo `.env` existe en la raíz (mismo nivel que `package.json`)
+2. Confirmar que el formato es correcto: `GEMINI_API_KEY=tu-clave-sin-espacios`
+3. Reiniciar el servidor backend
+
+### Puerto en Uso
+
+Si los puertos 3000 o 5000 están ocupados:
+
 ```bash
-# Cambiar puerto en .env
+# Modificar el archivo .env
 PORT=5001
+```
 
-# O detener procesos que usan esos puertos
-# Windows:
+O detener el proceso que está usando el puerto:
+
+```bash
+# Windows PowerShell
 netstat -ano | findstr :5000
 taskkill /PID <numero> /F
 ```
 
-### La historia no se genera
-- Verifica que tu API Key tiene créditos
-- Verifica que el modelo especificado está disponible
-- Revisa la consola del servidor para errores específicos
+### Error de Cuota Excedida
+
+Si aparece un error relacionado con límites de cuota:
+
+1. Verificar el uso actual en [Google AI Studio](https://aistudio.google.com/)
+2. Esperar unos minutos si es un límite temporal de tasa
+3. Confirmar que estás usando el modelo gratuito (Flash)
 
 ## Próximos Pasos
 
-Una vez que la aplicación esté funcionando:
+Una vez completada la instalación:
 
-1. Lee el [README.md](../README.md) para entender cómo usar la aplicación
-2. Revisa la [Documentación de la API](API.md) para entender los endpoints
-3. Explora el código en `server/` y `client/src/` para entender la estructura
-
-## Recursos Adicionales
-
-- **OpenAI API Docs**: https://platform.openai.com/docs
-- **React Docs**: https://react.dev/
-- **Express Docs**: https://expressjs.com/
-- **Node.js Docs**: https://nodejs.org/docs
-
----
-
-¡Listo para crear historias épicas! 📖✨
-
-
-
+1. Consultar la [Documentación de la API](API.md) para entender los endpoints disponibles
+2. Revisar la [Arquitectura del Sistema](ARQUITECTURA.md) para comprender la estructura
+3. Explorar el código fuente en `server/` y `client/src/` para personalizar la aplicación

@@ -1,20 +1,23 @@
-# 📡 Documentación de la API
+# Documentación de la API
 
-## Base URL
+## Información General
 
-```
-http://localhost:5000/api
-```
+**Base URL:** `http://localhost:5000/api`
+
+**Formato de Respuesta:** JSON
+
+**Códigos de Estado HTTP Estándar**
 
 ## Endpoints
 
 ### Health Check
 
-#### `GET /api/health`
+#### GET /api/health
 
-Verifica el estado del servidor.
+Verifica el estado del servidor y confirma que la API está operativa.
 
 **Respuesta Exitosa (200):**
+
 ```json
 {
   "status": "ok",
@@ -26,29 +29,26 @@ Verifica el estado del servidor.
 
 ### Crear Historia
 
-#### `POST /api/story/create`
+#### POST /api/story/create
 
-Crea una nueva historia interactiva.
+Crea una nueva historia interactiva basada en los parámetros proporcionados.
 
-**Body:**
-```json
-{
-  "genre": "string (requerido)",
-  "theme": "string (requerido)",
-  "initialPrompt": "string (opcional)",
-  "userPreferences": {
-    "style": "string (opcional)",
-    "tone": "string (opcional)"
-  }
-}
-```
+**Parámetros del Request:**
 
-**Ejemplo:**
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `genre` | string | Sí | Género de la historia |
+| `theme` | string | Sí | Tema o concepto principal |
+| `initialPrompt` | string | No | Instrucciones adicionales para la generación |
+| `userPreferences` | object | No | Preferencias de estilo y tono |
+
+**Ejemplo de Request:**
+
 ```json
 {
   "genre": "ciencia ficción",
   "theme": "Un científico que descubre un portal a otra dimensión",
-  "initialPrompt": "Incluye elementos de viaje en el tiempo y paradojas temporales",
+  "initialPrompt": "Incluye elementos de viaje en el tiempo",
   "userPreferences": {
     "style": "descriptivo",
     "tone": "misterioso"
@@ -57,6 +57,7 @@ Crea una nueva historia interactiva.
 ```
 
 **Respuesta Exitosa (200):**
+
 ```json
 {
   "success": true,
@@ -64,78 +65,58 @@ Crea una nueva historia interactiva.
   "story": {
     "id": "story_1234567890_abc123",
     "genre": "ciencia ficción",
-    "theme": "Un científico que descubre un portal a otra dimensión",
+    "theme": "Un científico que descubre un portal",
     "currentChapter": 0,
     "chapters": [
       {
-        "title": "El Descubrimiento",
+        "title": "El Portal",
         "chapter": 1,
-        "content": "Contenido narrativo completo...",
-        "characters": [
-          {
-            "name": "Dr. Elena Martínez",
-            "role": "Protagonista",
-            "personality": "Curiosa y determinada",
-            "description": "Científica de 35 años especializada en física cuántica"
-          }
-        ],
-        "decisions": [
-          {
-            "id": 1,
-            "text": "Investigar el portal más a fondo",
-            "hint": "Podría revelar secretos peligrosos"
-          },
-          {
-            "id": 2,
-            "text": "Reportar el descubrimiento a las autoridades",
-            "hint": "Más seguro pero menos emocionante"
-          }
-        ],
-        "atmosphere": "Un laboratorio iluminado por luces azules parpadeantes",
-        "cliffhanger": "¿Qué secretos oculta este portal?"
+        "content": "...",
+        "characters": [...],
+        "decisions": [...]
       }
     ],
-    "decisions": [],
     "characters": [...],
-    "createdAt": "2025-01-15T10:30:00.000Z"
+    "decisions": [...]
   }
 }
 ```
 
-**Errores:**
-- `400`: Faltan campos requeridos (genre o theme)
-- `500`: Error al procesar la solicitud
+**Errores Posibles:**
+
+- `400 Bad Request`: Parámetros inválidos o faltantes
+- `500 Internal Server Error`: Error en la generación de la historia
 
 ---
 
 ### Continuar Historia
 
-#### `POST /api/story/:storyId/continue`
+#### POST /api/story/:storyId/continue
 
-Continúa la historia basándose en una decisión del usuario.
+Genera el siguiente capítulo de una historia existente basado en la decisión del usuario.
 
 **Parámetros de URL:**
-- `storyId` (string, requerido): ID de la historia
 
-**Body:**
-```json
-{
-  "decision": "string (opcional)",
-  "userAction": "string (opcional)"
-}
-```
+- `storyId` (string, requerido): Identificador único de la historia
 
-**Nota:** Al menos uno de los campos (`decision` o `userAction`) debe estar presente.
+**Parámetros del Request:**
 
-**Ejemplo:**
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `decision` | string | Sí | Decisión seleccionada por el usuario |
+| `userAction` | string | No | Acción personalizada adicional |
+
+**Ejemplo de Request:**
+
 ```json
 {
   "decision": "Investigar el portal más a fondo",
-  "userAction": "Decido usar mi equipo científico para analizar las ondas de energía"
+  "userAction": "Decido usar mi equipo científico para analizar la energía del portal"
 }
 ```
 
 **Respuesta Exitosa (200):**
+
 ```json
 {
   "success": true,
@@ -143,41 +124,32 @@ Continúa la historia basándose en una decisión del usuario.
     "id": "story_1234567890_abc123",
     "currentChapter": 1,
     "chapters": [...],
-    "decisions": [
-      {
-        "chapter": 0,
-        "decision": "Investigar el portal más a fondo",
-        "timestamp": "2025-01-15T10:35:00.000Z"
-      }
-    ]
+    "characters": [...],
+    "decisions": [...]
   },
   "newChapter": {
-    "title": "Más Allá del Portal",
+    "title": "Descubrimientos",
     "chapter": 2,
-    "content": "Nuevo contenido narrativo...",
-    "decisions": [...],
-    "characters": [...]
+    "content": "...",
+    "decisions": [...]
   }
 }
 ```
-
-**Errores:**
-- `404`: Historia no encontrada
-- `400`: Falta decisión o acción del usuario
-- `500`: Error al procesar la solicitud
 
 ---
 
 ### Obtener Historia
 
-#### `GET /api/story/:storyId`
+#### GET /api/story/:storyId
 
-Obtiene el estado actual de una historia.
+Obtiene el estado actual completo de una historia específica.
 
 **Parámetros de URL:**
-- `storyId` (string, requerido): ID de la historia
+
+- `storyId` (string, requerido): Identificador único de la historia
 
 **Respuesta Exitosa (200):**
+
 ```json
 {
   "success": true,
@@ -188,116 +160,103 @@ Obtiene el estado actual de una historia.
     "currentChapter": 1,
     "chapters": [...],
     "characters": [...],
-    "decisions": [...],
-    "createdAt": "..."
+    "decisions": [...]
   }
 }
 ```
 
-**Errores:**
-- `404`: Historia no encontrada
+**Errores Posibles:**
+
+- `404 Not Found`: La historia no existe o ya no está disponible
 
 ---
 
 ### Generar Personaje
 
-#### `POST /api/story/:storyId/character`
+#### POST /api/story/:storyId/character
 
-Genera un nuevo personaje para la historia.
+Genera un nuevo personaje para una historia existente.
 
 **Parámetros de URL:**
-- `storyId` (string, requerido): ID de la historia
 
-**Body:**
+- `storyId` (string, requerido): Identificador único de la historia
+
+**Parámetros del Request:**
+
+| Campo | Tipo | Requerido | Descripción |
+|-------|------|-----------|-------------|
+| `characterPrompt` | string | Sí | Descripción del personaje a generar |
+
+**Ejemplo de Request:**
+
 ```json
 {
-  "characterPrompt": "string (requerido)"
-}
-```
-
-**Ejemplo:**
-```json
-{
-  "characterPrompt": "Un aliado misterioso con poderes especiales que aparece en el momento crucial"
+  "characterPrompt": "Un aliado misterioso con poderes especiales"
 }
 ```
 
 **Respuesta Exitosa (200):**
+
 ```json
 {
   "success": true,
   "character": {
-    "name": "Aria Shadowweaver",
+    "name": "Luna Shadows",
     "role": "Aliado",
     "personality": "Misteriosa pero leal",
-    "description": "Una figura enigmática con habilidades sobrenaturales",
-    "motivations": "Proteger el equilibrio entre dimensiones",
-    "relationships": "Conoce secretos sobre el portal",
-    "secrets": "Pertenece a una organización interdimensional"
+    "description": "Una mujer con habilidades sobrenaturales",
+    "motivations": "...",
+    "relationships": "..."
   }
 }
 ```
 
-**Errores:**
-- `404`: Historia no encontrada
-- `400`: Falta characterPrompt
-- `500`: Error al procesar la solicitud
-
 ---
 
-## Códigos de Estado HTTP
+## Manejo de Errores
 
-- `200`: Solicitud exitosa
-- `400`: Error en la solicitud (datos faltantes o inválidos)
-- `404`: Recurso no encontrado
-- `500`: Error interno del servidor
+### Formato de Respuesta de Error
 
-## Formato de Respuestas de Error
+Todas las respuestas de error siguen el siguiente formato:
 
 ```json
 {
-  "error": "Descripción del error",
-  "message": "Mensaje detallado (opcional)"
+  "success": false,
+  "error": "Descripción del error"
 }
 ```
 
----
+### Códigos de Estado HTTP
 
-## Ejemplos de Uso con cURL
+| Código | Descripción |
+|--------|-------------|
+| 200 | Operación exitosa |
+| 400 | Solicitud inválida (parámetros incorrectos) |
+| 404 | Recurso no encontrado |
+| 500 | Error interno del servidor |
 
-### Crear Historia
-```bash
-curl -X POST http://localhost:5000/api/story/create \
-  -H "Content-Type: application/json" \
-  -d '{
-    "genre": "fantasía",
-    "theme": "Un mago que debe salvar su mundo",
-    "initialPrompt": "Incluye dragones y magia antigua"
-  }'
+### Errores Comunes
+
+**Error de validación:**
+```json
+{
+  "success": false,
+  "error": "El campo 'theme' es requerido"
+}
 ```
 
-### Continuar Historia
-```bash
-curl -X POST http://localhost:5000/api/story/story_123/continue \
-  -H "Content-Type: application/json" \
-  -d '{
-    "decision": "Confrontar al dragón directamente"
-  }'
+**Error de recurso no encontrado:**
+```json
+{
+  "success": false,
+  "error": "Historia no encontrada"
+}
 ```
 
-### Obtener Historia
-```bash
-curl http://localhost:5000/api/story/story_123
+**Error de generación:**
+```json
+{
+  "success": false,
+  "error": "Error al generar contenido con Gemini: [detalle del error]"
+}
 ```
-
----
-
-## Notas
-
-- Todas las fechas están en formato ISO 8601
-- Los IDs de historias son únicos y se generan automáticamente
-- Las historias se almacenan en memoria durante la sesión del servidor
-- En producción, se recomienda usar una base de datos para persistencia
-
-
-

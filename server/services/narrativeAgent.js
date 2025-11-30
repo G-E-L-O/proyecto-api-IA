@@ -1,9 +1,5 @@
-const OpenAI = require('openai');
-
-// Inicializar OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Usar el proveedor de IA unificado (soporta Gemini y OpenAI con fallback)
+const aiProvider = require('./aiProvider');
 
 const narrativeAgent = {
   /**
@@ -23,7 +19,9 @@ Características importantes:
 - Crea atmósferas vívidas y descripciones detalladas
 - Responde siempre en español
 
-Formato de respuesta: JSON con la siguiente estructura:
+IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido. No incluyas texto adicional, explicaciones, ni formateo markdown. Solo el JSON puro.
+
+Formato de respuesta requerido (JSON válido):
 {
   "title": "Título de la historia",
   "chapter": 1,
@@ -55,26 +53,35 @@ ${initialPrompt ? `Prompt inicial: ${initialPrompt}` : ''}
 ${userPreferences.style ? `Estilo: ${userPreferences.style}` : ''}
 ${userPreferences.tone ? `Tono: ${userPreferences.tone}` : ''}
 
-Crea el primer capítulo de esta historia. Debe ser atractivo, inmersivo y presentar al menos 2-3 decisiones importantes que el usuario pueda tomar. Los personajes deben ser interesantes y la trama debe tener potencial para múltiples ramificaciones.`;
+Crea el primer capítulo de esta historia. Debe ser atractivo, inmersivo y presentar al menos 2-3 decisiones importantes que el usuario pueda tomar. Los personajes deben ser interesantes y la trama debe tener potencial para múltiples ramificaciones.
 
-      const completion = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.9,
-        max_tokens: 2000,
-        response_format: { type: "json_object" }
-      });
+RECUERDA: Responde SOLO con el objeto JSON, sin texto adicional ni explicaciones.`;
 
-      const storyData = JSON.parse(completion.choices[0].message.content);
+      const storyData = await aiProvider.generateContent(
+        systemPrompt,
+        userPrompt,
+        {
+          temperature: 0.9,
+          maxTokens: 8192, // Plan gratuito permite hasta 8192 tokens - NO afecta plan Pro
+          responseFormat: 'json_object'
+        }
+      );
 
       console.log('✅ Historia inicial generada');
       return storyData;
 
     } catch (error) {
       console.error('Error en createStory:', error);
+      
+      // Manejar errores específicos
+      if (error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('Cuota excedida')) {
+        throw new Error('Cuota excedida: Todos los proveedores de IA han agotado sus créditos. Por favor, verifica tus cuentas de Gemini y OpenAI.');
+      }
+      
+      if (error.message?.includes('401') || error.message?.includes('API Key inválida') || error.message?.includes('Invalid API Key')) {
+        throw new Error('API Key inválida: Verifica que tus claves API (GEMINI_API_KEY o OPENAI_API_KEY) en el archivo .env sean correctas.');
+      }
+      
       throw new Error(`Error al crear la historia: ${error.message}`);
     }
   },
@@ -134,18 +141,15 @@ Genera el siguiente capítulo (capítulo ${story.chapters.length + 1}) que:
 5. Termina con un cliffhanger que motive a continuar
 6. Actualiza o introduce nuevos personajes si es necesario`;
 
-      const completion = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'gpt-4o',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.85,
-        max_tokens: 2000,
-        response_format: { type: "json_object" }
-      });
-
-      const nextChapter = JSON.parse(completion.choices[0].message.content);
+      const nextChapter = await aiProvider.generateContent(
+        systemPrompt,
+        userPrompt,
+        {
+          temperature: 0.85,
+          maxTokens: 8192, // Plan gratuito permite hasta 8192 tokens - NO afecta plan Pro
+          responseFormat: 'json_object'
+        }
+      );
       nextChapter.chapter = story.chapters.length + 1;
 
       console.log('✅ Capítulo generado');
@@ -153,6 +157,16 @@ Genera el siguiente capítulo (capítulo ${story.chapters.length + 1}) que:
 
     } catch (error) {
       console.error('Error en continueStory:', error);
+      
+      // Manejar errores específicos
+      if (error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('Cuota excedida')) {
+        throw new Error('Cuota excedida: Todos los proveedores de IA han agotado sus créditos.');
+      }
+      
+      if (error.message?.includes('401') || error.message?.includes('API Key inválida')) {
+        throw new Error('API Key inválida: Verifica que tus claves API sean correctas.');
+      }
+      
       throw new Error(`Error al continuar la historia: ${error.message}`);
     }
   },
@@ -190,24 +204,31 @@ Solicitud: ${characterPrompt}
 
 El personaje debe ser coherente con el género y tema, y tener potencial para crear situaciones interesantes en la narrativa.`;
 
-      const completion = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'gpt-4o',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.8,
-        max_tokens: 800,
-        response_format: { type: "json_object" }
-      });
-
-      const character = JSON.parse(completion.choices[0].message.content);
+      const character = await aiProvider.generateContent(
+        systemPrompt,
+        userPrompt,
+        {
+          temperature: 0.8,
+          maxTokens: 2048, // Plan gratuito - NO consume tokens del plan Pro (solo usa Flash)
+          responseFormat: 'json_object'
+        }
+      );
 
       console.log('✅ Personaje generado');
       return character;
 
     } catch (error) {
       console.error('Error en generateCharacter:', error);
+      
+      // Manejar errores específicos
+      if (error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('Cuota excedida')) {
+        throw new Error('Cuota excedida: Todos los proveedores de IA han agotado sus créditos.');
+      }
+      
+      if (error.message?.includes('401') || error.message?.includes('API Key inválida')) {
+        throw new Error('API Key inválida: Verifica que tus claves API sean correctas.');
+      }
+      
       throw new Error(`Error al generar personaje: ${error.message}`);
     }
   }
