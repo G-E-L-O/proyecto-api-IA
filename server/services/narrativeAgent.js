@@ -53,7 +53,7 @@ ${initialPrompt ? `Prompt inicial: ${initialPrompt}` : ''}
 ${userPreferences.style ? `Estilo: ${userPreferences.style}` : ''}
 ${userPreferences.tone ? `Tono: ${userPreferences.tone}` : ''}
 
-Crea el primer capítulo de esta historia. Debe ser atractivo, inmersivo y presentar al menos 2-3 decisiones importantes que el usuario pueda tomar. Los personajes deben ser interesantes y la trama debe tener potencial para múltiples ramificaciones.
+Crea el primer capítulo de esta historia. Debe ser atractivo, inmersivo y presentar OBLIGATORIAMENTE 3 decisiones importantes y distintas que el usuario pueda tomar. Los personajes deben ser interesantes y la trama debe tener potencial para múltiples ramificaciones.
 
 RECUERDA: Responde SOLO con el objeto JSON, sin texto adicional ni explicaciones.`;
 
@@ -74,12 +74,13 @@ RECUERDA: Responde SOLO con el objeto JSON, sin texto adicional ni explicaciones
       console.error('Error en createStory:', error);
       
       // Manejar errores específicos
-      if (error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('Cuota excedida')) {
-        throw new Error('Cuota excedida: Todos los proveedores de IA han agotado sus créditos. Por favor, verifica tus cuentas de Gemini y OpenAI.');
+      if (error.message?.includes('Límite de cuota') || error.message?.includes('429') || error.message?.includes('quota')) {
+        // El mensaje ya viene formateado del aiProvider, reutilizarlo
+        throw error;
       }
       
       if (error.message?.includes('401') || error.message?.includes('API Key inválida') || error.message?.includes('Invalid API Key')) {
-        throw new Error('API Key inválida: Verifica que tus claves API (GEMINI_API_KEY o OPENAI_API_KEY) en el archivo .env sean correctas.');
+        throw new Error('API Key inválida: Verifica que tu GEMINI_API_KEY en el archivo .env sea correcta.');
       }
       
       throw new Error(`Error al crear la historia: ${error.message}`);
@@ -101,11 +102,37 @@ RECUERDA: Responde SOLO con el objeto JSON, sin texto adicional ni explicaciones
 - Mantener el tono y estilo de la historia original
 - Responde siempre en español
 
-Formato: JSON con la misma estructura que createStory.`;
+IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido. No incluyas texto adicional, explicaciones, ni formateo markdown. Solo el JSON puro.
+
+Formato de respuesta requerido (JSON válido):
+{
+  "title": "Título opcional del capítulo",
+  "chapter": ${story.chapters.length + 1},
+  "content": "Contenido narrativo detallado del capítulo (OBLIGATORIO, mínimo 300 palabras). Este campo ES OBLIGATORIO y debe contener el texto completo del capítulo.",
+  "characters": [
+    {
+      "name": "Nombre",
+      "role": "Protagonista/Antagonista/Secundario",
+      "personality": "Descripción de personalidad",
+      "description": "Descripción física y de fondo"
+    }
+  ],
+  "decisions": [
+    {
+      "id": 1,
+      "text": "Texto de la decisión",
+      "hint": "Pista sobre las consecuencias"
+    }
+  ],
+  "atmosphere": "Descripción del ambiente y tono (opcional)",
+  "cliffhanger": "Final intrigante que motive a continuar (opcional)"
+}
+
+RECUERDA: El campo "content" es OBLIGATORIO y debe contener el texto narrativo completo del capítulo.`;
 
       // Construir contexto de la historia
       const storyContext = story.chapters.map((ch, idx) =>
-        `Capítulo ${idx + 1}: ${ch.content.substring(0, 200)}...`
+        `Capítulo ${idx + 1}: ${ch.content ? ch.content.substring(0, 200) : 'Sin contenido'}...`
       ).join('\n\n');
 
       const charactersContext = story.characters.map(char =>
@@ -137,7 +164,7 @@ Genera el siguiente capítulo (capítulo ${story.chapters.length + 1}) que:
 1. Desarrolla las consecuencias de la decisión del usuario
 2. Mantiene la coherencia con la historia anterior
 3. Introduce nuevos elementos interesantes
-4. Presenta 2-3 nuevas decisiones importantes
+4. OBLIGATORIO: Presenta SIEMPRE 3 decisiones claras y distintas que permitan avanzar la trama
 5. Termina con un cliffhanger que motive a continuar
 6. Actualiza o introduce nuevos personajes si es necesario`;
 
@@ -150,21 +177,59 @@ Genera el siguiente capítulo (capítulo ${story.chapters.length + 1}) que:
           responseFormat: 'json_object'
         }
       );
+      
+      // Validar y asegurar estructura correcta del capítulo
       nextChapter.chapter = story.chapters.length + 1;
+      
+      // Validar que exista el campo content
+      if (!nextChapter.content || nextChapter.content.trim().length === 0) {
+        console.error('❌ ERROR: El capítulo generado no tiene contenido válido');
+        console.log('Estructura del capítulo recibido:', JSON.stringify(nextChapter, null, 2));
+        
+        // Intentar usar otros campos posibles
+        if (nextChapter.text && nextChapter.text.trim().length > 0) {
+          console.log('⚠️ Usando campo "text" como contenido');
+          nextChapter.content = nextChapter.text;
+        } else if (nextChapter.story && nextChapter.story.trim().length > 0) {
+          console.log('⚠️ Usando campo "story" como contenido');
+          nextChapter.content = nextChapter.story;
+        } else if (nextChapter.narrative && nextChapter.narrative.trim().length > 0) {
+          console.log('⚠️ Usando campo "narrative" como contenido');
+          nextChapter.content = nextChapter.narrative;
+        } else {
+          // Si no hay contenido, crear uno por defecto
+          console.warn('⚠️ No se encontró contenido válido, creando contenido por defecto');
+          nextChapter.content = `El capítulo continúa la historia basándose en tu decisión: "${userDecision}".\n\nLa trama se desarrolla con nuevas revelaciones y desafíos.`;
+        }
+      }
+      
+      // Asegurar que haya decisiones
+      if (!nextChapter.decisions || nextChapter.decisions.length === 0) {
+        console.log('⚠️ La IA no generó decisiones, añadiendo por defecto');
+        nextChapter.decisions = [
+          { text: "Explorar los alrededores", hint: "Investiga qué hay cerca" },
+          { text: "Hablar con alguien", hint: "Busca información" },
+          { text: "Continuar el camino", hint: "Sigue adelante" }
+        ];
+      }
 
-      console.log('✅ Capítulo generado');
+      console.log('✅ Capítulo generado exitosamente');
+      console.log(`📝 Contenido: ${nextChapter.content ? nextChapter.content.substring(0, 100) + '...' : 'VACÍO'}`);
+      console.log(`🎯 Decisiones: ${nextChapter.decisions ? nextChapter.decisions.length : 0}`);
+      
       return nextChapter;
 
     } catch (error) {
       console.error('Error en continueStory:', error);
       
       // Manejar errores específicos
-      if (error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('Cuota excedida')) {
-        throw new Error('Cuota excedida: Todos los proveedores de IA han agotado sus créditos.');
+      if (error.message?.includes('Límite de cuota') || error.message?.includes('429') || error.message?.includes('quota')) {
+        // El mensaje ya viene formateado del aiProvider, reutilizarlo
+        throw error;
       }
       
       if (error.message?.includes('401') || error.message?.includes('API Key inválida')) {
-        throw new Error('API Key inválida: Verifica que tus claves API sean correctas.');
+        throw new Error('API Key inválida: Verifica que tu GEMINI_API_KEY en el archivo .env sea correcta.');
       }
       
       throw new Error(`Error al continuar la historia: ${error.message}`);

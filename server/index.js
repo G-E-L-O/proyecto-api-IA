@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { narrativeAgent } = require('./services/narrativeAgent');
+const { freesoundService } = require('./services/freesoundService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,6 +21,39 @@ const activeStories = new Map();
 // Ruta de salud
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Agente de Narrativas Interactivas funcionando' });
+});
+
+// Obtener samples de audio para un género
+app.get('/api/music/samples/:genre', async (req, res) => {
+  try {
+    const { genre } = req.params;
+    const duration = parseInt(req.query.duration) || 30;
+    const mood = req.query.mood || '';
+
+    console.log(`🎵 Buscando samples de audio para género: ${genre}, mood: ${mood}`);
+
+    const sample = await freesoundService.searchSamples(genre, mood, duration);
+
+    if (!sample) {
+      return res.json({
+        success: false,
+        message: 'No se encontraron samples, usar música generativa'
+      });
+    }
+
+    res.json({
+      success: true,
+      sample
+    });
+
+  } catch (error) {
+    console.error('❌ Error obteniendo samples:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error al obtener samples de audio',
+      message: error.message
+    });
+  }
 });
 
 // Crear una nueva historia interactiva
@@ -92,6 +126,20 @@ app.post('/api/story/:storyId/continue', async (req, res) => {
       userAction: userAction
     });
 
+    // Validar estructura del resultado antes de agregarlo
+    console.log('📋 Estructura del capítulo recibido:');
+    console.log(`  - Tiene content: ${!!result.content}`);
+    console.log(`  - Longitud del content: ${result.content ? result.content.length : 0}`);
+    console.log(`  - Tiene decisions: ${!!result.decisions}`);
+    console.log(`  - Número de decisions: ${result.decisions ? result.decisions.length : 0}`);
+    
+    // Asegurar que el contenido exista antes de agregarlo
+    if (!result.content || result.content.trim().length === 0) {
+      console.error('❌ ERROR CRÍTICO: El capítulo no tiene contenido válido');
+      console.log('Estructura completa:', JSON.stringify(result, null, 2));
+      throw new Error('El capítulo generado no tiene contenido válido. Por favor, intenta de nuevo.');
+    }
+
     // Actualizar historia
     story.chapters.push(result);
     story.currentChapter = story.chapters.length - 1;
@@ -103,6 +151,10 @@ app.post('/api/story/:storyId/continue', async (req, res) => {
     story.characters = result.characters || story.characters;
 
     activeStories.set(storyId, story);
+    
+    // Log final para verificar
+    console.log(`✅ Historia actualizada - Total capítulos: ${story.chapters.length}, Capítulo actual: ${story.currentChapter}`);
+    console.log(`📄 Contenido del nuevo capítulo (primeros 150 caracteres): ${story.chapters[story.currentChapter].content.substring(0, 150)}...`);
 
     res.json({
       success: true,
@@ -180,4 +232,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
   console.log(`📖 Agente de Narrativas Interactivas listo`);
   console.log(`✨ Crea historias inmersivas con IA`);
+  console.log(`🎵 Freesound API integrada`);
 });

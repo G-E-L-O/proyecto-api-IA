@@ -11,20 +11,6 @@ Sistema de generación de narrativas interactivas mediante inteligencia artifici
 
 Este proyecto implementa una plataforma completa para la generación de narrativas interactivas utilizando Google Gemini. El sistema genera historias dinámicas donde cada decisión del usuario impacta significativamente el desarrollo narrativo, creando una experiencia única y personalizada.
 
-## Características Principales
-
-- **Generación Dinámica de Contenido**: Creación automática de narrativas completas con estructura coherente
-- **Sistema de Decisiones**: Múltiples puntos de ramificación que alteran la trama
-- **Gestión de Personajes**: Creación y evolución de personajes con personalidades complejas
-- **Múltiples Géneros**: Soporte para ciencia ficción, fantasía, misterio, terror, romance, drama, thriller, histórico y distopía
-- **Interfaz Moderna**: Diseño responsive con experiencia de usuario optimizada
-- **API RESTful**: Arquitectura basada en servicios para fácil integración
-
-## Tecnologías
-
-### Backend
-- Node.js 16+
-- Express.js 4.18
 - Google Gemini API (plan gratuito)
 - dotenv para gestión de configuración
 
@@ -32,7 +18,9 @@ Este proyecto implementa una plataforma completa para la generación de narrativ
 - React 18
 - Axios para comunicación HTTP
 - Lucide React para sistema de iconos
+- Web Audio API para música ambiental procedural
 - CSS3 con diseño responsive
+
 
 ## Requisitos del Sistema
 
